@@ -97,7 +97,7 @@ namespace ProjectMichalWendt
             refreshList();
         }
 
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)   // Button for archivization folder choosing
         {
             System.Windows.Forms.FolderBrowserDialog openFileDlg = new System.Windows.Forms.FolderBrowserDialog();
             var result = openFileDlg.ShowDialog();
@@ -133,7 +133,7 @@ namespace ProjectMichalWendt
             ((MainWindow)d).SelectedPathTxtBox.Text = e.NewValue.ToString();
         }
 
-        private void Archivize()    // THIS METHOD GOES TO LIBRARY PROJECT
+        private void Archivize()    // THIS METHOD IS IN LIBRARY PROJECT (HERE ONLY FOR TESTING)
         {
             Directory.CreateDirectory(SelectedPath);
             // Create and open a new ZIP file
@@ -146,7 +146,7 @@ namespace ProjectMichalWendt
             }                      
         }
 
-        public void SaveListToFile()
+        public void SaveListToFile()    // Hold current files and archiv folder paths in files
         {
             using (StreamWriter writer = File.CreateText("archivedFiles.txt")) // Save archive patch to txt file
             {
@@ -158,7 +158,7 @@ namespace ProjectMichalWendt
             }
         }
 
-        public void StartButton_Click(object sender, RoutedEventArgs e)
+        public void StartButton_Click(object sender, RoutedEventArgs e) // Start app but ensure if archiv folder was choosen
         {
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;

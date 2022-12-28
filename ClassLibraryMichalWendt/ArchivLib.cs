@@ -39,7 +39,7 @@ namespace ClassLibraryMichalWendt
             traceSwitch = new TraceSwitch("Logowanie", "Level of loging done on directory");
 
 
-            foreach(var file in archivedFiles)
+            foreach(var file in archivedFiles)  // File watchers for all choosen files
             {
                 fileSystemWatcher = new FileSystemWatcher();
                 fileSystemWatcher.Path = System.IO.Path.GetDirectoryName(file);
@@ -56,7 +56,7 @@ namespace ClassLibraryMichalWendt
                     watchers[i].Changed += (Object sender, FileSystemEventArgs e) =>
                     {
                         eventLog.WriteEntry(e.Name + " :changed\n");
-                        UpdateArchive();
+                        UpdateArchive();    // Update archive on choosen files change
                     };
                 }
                 if (traceSwitch.TraceWarning)
@@ -70,13 +70,13 @@ namespace ClassLibraryMichalWendt
                 {
                     watchers[i].Created += (Object sender, FileSystemEventArgs e) =>
                     {
-                        eventLog.WriteEntry(e.Name + " :created\n");
+                        eventLog.WriteEntry(e.Name + " :created\n");    // Can't happen but wont couse problems
 
                     };
                     watchers[i].Deleted += (Object sender, FileSystemEventArgs e) =>
                     {
                         eventLog.WriteEntry(e.Name + " :deleted\n");
-                        archivedFiles.Remove(e.Name);
+                        archivedFiles.Remove(e.Name);   // Remove file from list if it was deleted
                     };
                 }
                 watchers[i].EnableRaisingEvents = true;
@@ -84,9 +84,9 @@ namespace ClassLibraryMichalWendt
             // ________________________________________________________________________ ________________________________________________________________________
             // Creating new zip file ________________________________________________________________________
 
-            Directory.CreateDirectory(zipSelectedPath);
+            Directory.CreateDirectory(zipSelectedPath); // Create folder if does not exists (it's not nesesery to check if it exists)
             // Create and open a new ZIP file
-            using (ZipArchive archive = ZipFile.Open(zipSelectedPath + "\\archive.zip", ZipArchiveMode.Update))
+            using (ZipArchive archive = ZipFile.Open(zipSelectedPath + "\\archive.zip", ZipArchiveMode.Update)) // Archive all files from list
             {
                 foreach (var file in archivedFiles)
                 {
@@ -127,7 +127,7 @@ namespace ClassLibraryMichalWendt
             }
         }
 
-        public void ReadListFromFile()
+        public void ReadListFromFile()  // Read paths saved in ProjectMichalWendt
         {
             using (StreamReader tr = new StreamReader("archivedFiles.txt"))  // Read file names from txt file
             {
@@ -144,9 +144,12 @@ namespace ClassLibraryMichalWendt
             }
         }
 
-        public void StopService()
+        public void StopService()   // On stop button pushed disables watchers and logs
         {
-            fileSystemWatcher.Dispose();
+            for (int i = 0; i < watchers.Count; ++i)
+            {
+                watchers[i].Dispose();
+            }
             eventLog.Dispose();
         }
 
