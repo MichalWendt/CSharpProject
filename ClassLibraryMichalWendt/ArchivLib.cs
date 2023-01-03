@@ -58,7 +58,7 @@ namespace ClassLibraryMichalWendt
                 {
                     watchers[i].Changed += (Object sender, FileSystemEventArgs e) =>
                     {
-                        eventLog.WriteEntry(e.Name + " :changed\n");
+                        eventLog.WriteEntry(e.Name + " :changed\n", EventLogEntryType.Information);
                         UpdateArchive();    // Update archive on choosen files change
                     };
                 }
@@ -66,25 +66,26 @@ namespace ClassLibraryMichalWendt
                 {
                     watchers[i].Renamed += (object sender, RenamedEventArgs e) =>
                     {
-                        eventLog.WriteEntry(e.Name + " :renamed\n");
+                        eventLog.WriteEntry(e.Name + " :renamed\n", EventLogEntryType.Information);
                     };
                 }
                 if (traceSwitch.TraceError)
                 {
                     watchers[i].Created += (Object sender, FileSystemEventArgs e) =>
                     {
-                        eventLog.WriteEntry(e.Name + " :created\n");    // Can't happen but wont couse problems
+                        eventLog.WriteEntry(e.Name + " :created\n", EventLogEntryType.Information);    // Can't happen but wont couse problems
 
                     };
                     watchers[i].Deleted += (Object sender, FileSystemEventArgs e) =>
                     {
-                        eventLog.WriteEntry(e.Name + " :deleted\n");
+                        eventLog.WriteEntry(e.Name + " :deleted\n", EventLogEntryType.Information);
                         archivedFiles.Remove(e.Name);   // Remove file from list if it was deleted
                     };
                 }
                 watchers[i].EnableRaisingEvents = true;
             }
-            // ________________________________________________________________________ ________________________________________________________________________
+
+
             // Creating new zip file ________________________________________________________________________
 
             Directory.CreateDirectory(zipSelectedPath); // Create folder if does not exists (it's not nesesery to check if it exists)
@@ -98,12 +99,13 @@ namespace ClassLibraryMichalWendt
                 }
             }
 
+            // Timers not used for now
             _timer = new System.Timers.Timer(10 * 60 * 1000); // every 10 minutes
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
             _timer.Start();
         }
-
-        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+                
+        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) // Method for counting elapsed time
         {
             // ignore the time, just compare the date
             if (_lastRun.Date < DateTime.Now.Date)
@@ -130,32 +132,25 @@ namespace ClassLibraryMichalWendt
             }
         }
 
-        public void ReadListFromFile()  // Read paths saved in ProjectMichalWendt
+        public void ReadListFromFile()  // Read paths saved in configuration files
         {
-            string path = ConfigDirectoryPath + "archivedFiles.txt";
+            string path = ConfigDirectoryPath + "archivedFiles.txt";    // Read archive path from txt file using plain text
             zipSelectedPath =  File.ReadAllText(path).Split('\n')[0];
 
-            /*foreach (string file in archivedFiles)  // Remove each of selected paths from list
-            {
-                string path2 = ConfigDirectoryPath + "archivedPath.txt";
-                File.AppendAllText(path2, file);
-            }*/
-
-            string path2 = ConfigDirectoryPath + "archivedFiles.txt";
+            string path2 = ConfigDirectoryPath + "archivedFiles.txt";   // Read file names from txt file using plain text
             List<string> result = File.ReadAllText(path2).Split('\n').ToList();
             foreach (string file in result)
             {
-                //EventLog.WriteEntry("Service", "File: " + result, EventLogEntryType.Warning);
                 archivedFiles.Add(file);
             }
 
-            /*using (StreamReader tr = new StreamReader(ConfigDirectoryPath + "archivedFiles.txt"))  // Read file names from txt file
+            /*using (StreamReader tr = new StreamReader(ConfigDirectoryPath + "archivedFiles.txt"))  // Read archive path from txt file using Xml
             {                
                 List<string> result = (List<string>)XamlServices.Load(tr);
                 EventLog.WriteEntry("Service", "Path: " + result, EventLogEntryType.Warning);
                 zipSelectedPath = result[0];
             }
-            using (StreamReader tr = new StreamReader(ConfigDirectoryPath + "archivedPath.txt"))  // Read file names from txt file
+            using (StreamReader tr = new StreamReader(ConfigDirectoryPath + "archivedPath.txt"))  // Read file names from txt file using Xml
             {
                 List<string> result = (List<string>)XamlServices.Load(tr);
                 foreach (string path in result)

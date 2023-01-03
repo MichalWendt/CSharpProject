@@ -216,5 +216,10 @@ namespace ProjectMichalWendt
             FolderButton.IsEnabled = true;
             label.Content = "Usługa: Zatrzymana";
         }
+
+        private void SelectedPathTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

@@ -62,7 +62,7 @@
                 <TextBox 
                 HorizontalAlignment="Stretch" VerticalAlignment="Center"
                 x:Name="SelectedPathTxtBox"
-                LostKeyboardFocus="SelectedPathTxtBox_LostKeyboardFocus" />
+                LostKeyboardFocus="SelectedPathTxtBox_LostKeyboardFocus" TextChanged="SelectedPathTxtBox_TextChanged" />
             </Grid>
         </DockPanel>
         <ListBox x:Name="archivedFilesWindow" Grid.Column="1"/>
