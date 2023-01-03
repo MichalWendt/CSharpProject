@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Timers;
@@ -25,12 +26,14 @@ namespace ClassLibraryMichalWendt
         private FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
         public static List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
 
+        string sourceName = ConfigurationManager.AppSettings.Get("Zrodlo");
+        string eventLogName = ConfigurationManager.AppSettings.Get("Dziennik");
+        string ConfigDirectoryPath = ConfigurationManager.AppSettings.Get("ConfigDirectoryPath");
+
         public void StartService()
         {
             ReadListFromFile();
             workingDirectory = ConfigurationManager.AppSettings.Get("Sciezka");
-            string sourceName = ConfigurationManager.AppSettings.Get("Zrodlo");
-            string eventLogName = ConfigurationManager.AppSettings.Get("Dziennik");
             if (!EventLog.SourceExists(sourceName, "."))
             {
                 EventLog.CreateEventSource(sourceName, eventLogName);
@@ -129,19 +132,38 @@ namespace ClassLibraryMichalWendt
 
         public void ReadListFromFile()  // Read paths saved in ProjectMichalWendt
         {
-            using (StreamReader tr = new StreamReader("archivedFiles.txt"))  // Read file names from txt file
+            string path = ConfigDirectoryPath + "archivedFiles.txt";
+            zipSelectedPath =  File.ReadAllText(path).Split('\n')[0];
+
+            /*foreach (string file in archivedFiles)  // Remove each of selected paths from list
             {
+                string path2 = ConfigDirectoryPath + "archivedPath.txt";
+                File.AppendAllText(path2, file);
+            }*/
+
+            string path2 = ConfigDirectoryPath + "archivedFiles.txt";
+            List<string> result = File.ReadAllText(path2).Split('\n').ToList();
+            foreach (string file in result)
+            {
+                //EventLog.WriteEntry("Service", "File: " + result, EventLogEntryType.Warning);
+                archivedFiles.Add(file);
+            }
+
+            /*using (StreamReader tr = new StreamReader(ConfigDirectoryPath + "archivedFiles.txt"))  // Read file names from txt file
+            {                
                 List<string> result = (List<string>)XamlServices.Load(tr);
+                EventLog.WriteEntry("Service", "Path: " + result, EventLogEntryType.Warning);
                 zipSelectedPath = result[0];
             }
-            using (StreamReader tr = new StreamReader("archivedPath.txt"))  // Read file names from txt file
+            using (StreamReader tr = new StreamReader(ConfigDirectoryPath + "archivedPath.txt"))  // Read file names from txt file
             {
                 List<string> result = (List<string>)XamlServices.Load(tr);
                 foreach (string path in result)
                 {
+                    EventLog.WriteEntry("Service", "File: " + result, EventLogEntryType.Warning);
                     archivedFiles.Add(path);
                 }
-            }
+            }*/
         }
 
         public void StopService()   // On stop button pushed disables watchers and logs

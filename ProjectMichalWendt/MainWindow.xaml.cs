@@ -31,6 +31,11 @@ namespace ProjectMichalWendt
         static HashSet<string> archivedFiles = new HashSet<string>(); // I hold only unique paths to files
         public static string SelectedPath = "c:\\archives";  // Path to archivized files
 
+        readonly static string EventLogName = ConfigurationManager.AppSettings["Dziennik"];
+        readonly static string EventLogSource = ConfigurationManager.AppSettings["Zrodlo"];
+        readonly static string ServiceName = ConfigurationManager.AppSettings["ServiceName"];
+        readonly static string ConfigDirectoryPath = ConfigurationManager.AppSettings["ConfigDirectoryPath"];
+
         public MainWindow()
         {
             //MessageBox.Show("log");
@@ -44,7 +49,8 @@ namespace ProjectMichalWendt
             {
                 serviceController = new ServiceController("ProjectService");
 
-                var config = ConfigurationManager.OpenExeConfiguration(@".\ServiceMichalWendt.exe");
+
+                //var config = ConfigurationManager.OpenExeConfiguration(@".\ServiceMichalWendt.exe");
                 //FolderBox.Text = config.AppSettings.Settings["Sciezka"].Value;
 
                 if (serviceController.Status == ServiceControllerStatus.Running)
@@ -64,6 +70,7 @@ namespace ProjectMichalWendt
                 StopButton.IsEnabled = false;
                 label.Content = "Usługa: Nie istnieje";
             }
+            Directory.CreateDirectory(ConfigDirectoryPath);
         }
 
         private void refreshList()
@@ -148,14 +155,21 @@ namespace ProjectMichalWendt
 
         public void SaveListToFile()    // Hold current files and archiv folder paths in files
         {
-            using (StreamWriter writer = File.CreateText("archivedFiles.txt")) // Save archive patch to txt file
+            string path = ConfigDirectoryPath + "archivedPath.txt"; // Save archive path to txt file using plain text
+            File.WriteAllText(path, SelectedPath);
+
+
+            string path2 = ConfigDirectoryPath + "archivedFiles.txt";   // Save files names to txt file using plain text
+            File.WriteAllText(path2, String.Join("\n", archivedFiles.ToArray()));
+
+            /*using (StreamWriter writer = File.CreateText(ConfigDirectoryPath + "archivedFiles.txt")) // Save archive path to txt file using Xml
             {
                 XamlServices.Save(writer, SelectedPath);
             }
-            using (StreamWriter writer = File.AppendText("archivedPath.txt")) // Save files names to txt file
+            using (StreamWriter writer = File.AppendText(ConfigDirectoryPath + "archivedPath.txt")) // Save files names to txt file using Xml
             {
                 XamlServices.Save(writer, archivedFiles);
-            }
+            }*/
         }
 
         public void StartButton_Click(object sender, RoutedEventArgs e) // Start app but ensure if archiv folder was choosen
@@ -165,7 +179,7 @@ namespace ProjectMichalWendt
             AddButton.IsEnabled = false;
             DeleteButton.IsEnabled = false;
             FolderButton.IsEnabled = false;
-            label.Content = "Usługa: Uruchomiona";            
+            label.Content = "Usługa: Uruchomiona";
 
             if (SelectedPathTxtBox.Text == @"c:\archives")
             {
@@ -186,6 +200,7 @@ namespace ProjectMichalWendt
                 SaveListToFile();
                 serviceController.Start();
                 serviceController.WaitForStatus(ServiceControllerStatus.Running);
+
             }
         }
 

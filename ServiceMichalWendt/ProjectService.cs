@@ -24,12 +24,26 @@ namespace ServiceMichalWendt
 
         protected override void OnStart(string[] args)
         {
-            archivLib.StartService();
+            try
+            {
+                archivLib.StartService();
+            } catch (Exception ex)
+            {
+                EventLog.WriteEntry("Service", "Failed to start Service " + ex.Message, EventLogEntryType.Error);
+            }
         }
 
         protected override void OnStop()
         {
-            archivLib.StopService();
+            try
+            {
+                archivLib.StopService();
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("Service", "Failed to stop Service " + ex.Message, EventLogEntryType.Error);
+            }
+
         }
     }
 }
