@@ -12,33 +12,44 @@ using System.Xaml;
 
 namespace ClassLibraryMichalWendt
 {
-    public class ArchivLib : FileSystemWatcher
+    public class ArchivLib
     {
         List<string> archivedFiles = new List<string>();
         string zipSelectedPath = "";
 
-        private System.Timers.Timer _timer;
-        private DateTime _lastRun = DateTime.Now.AddDays(-1);
+        //private System.Timers.Timer _timer;
+        //private DateTime _lastRun = DateTime.Now.AddDays(-1);
 
         private TraceSwitch traceSwitch;
         private EventLog eventLog;
         private string workingDirectory;
+        private string ConfigDirectoryPath;
+        private string eventLogName;
+        private string sourceName;
+        private string date;
         private FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
         public static List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
 
-        string sourceName = ConfigurationManager.AppSettings.Get("Zrodlo");
-        string eventLogName = ConfigurationManager.AppSettings.Get("Dziennik");
-        string ConfigDirectoryPath = ConfigurationManager.AppSettings.Get("ConfigDirectoryPath");
-
         public void StartService()
         {
-            ReadListFromFile();
+            
+
+            sourceName = ConfigurationManager.AppSettings.Get("Zrodlo");
+            eventLogName = ConfigurationManager.AppSettings.Get("Dziennik");
+            ConfigDirectoryPath = ConfigurationManager.AppSettings.Get("ConfigDirectoryPath");
+            date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH-mm-ss-fffffffZ");
+                        
+            
             workingDirectory = ConfigurationManager.AppSettings.Get("Sciezka");
             if (!EventLog.SourceExists(sourceName, "."))
             {
                 EventLog.CreateEventSource(sourceName, eventLogName);
             }
             eventLog = new EventLog(eventLogName, ".", sourceName);
+
+            eventLog.WriteEntry("1", EventLogEntryType.Error);
+
+            ReadListFromFile();
             traceSwitch = new TraceSwitch("Logowanie", "Level of loging done on directory");
 
 
@@ -90,7 +101,7 @@ namespace ClassLibraryMichalWendt
 
             Directory.CreateDirectory(zipSelectedPath); // Create folder if does not exists (it's not nesesery to check if it exists)
             // Create and open a new ZIP file
-            using (ZipArchive archive = ZipFile.Open(zipSelectedPath + "\\archive.zip", ZipArchiveMode.Update)) // Archive all files from list
+            using (ZipArchive archive = ZipFile.Open(zipSelectedPath + "\\archive" + date + ".zip", ZipArchiveMode.Create)) // Archive all files from list
             {
                 foreach (var file in archivedFiles)
                 {
@@ -100,11 +111,14 @@ namespace ClassLibraryMichalWendt
             }
 
             // Timers not used for now
+            /*
             _timer = new System.Timers.Timer(10 * 60 * 1000); // every 10 minutes
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
             _timer.Start();
+            */
         }
-                
+            
+        /*
         private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) // Method for counting elapsed time
         {
             // ignore the time, just compare the date
@@ -117,12 +131,13 @@ namespace ClassLibraryMichalWendt
                 _timer.Start();
             }
         }
+        */
 
         public void UpdateArchive() // Update existing zip
         {
             Directory.CreateDirectory(zipSelectedPath);
             // Create and open a new ZIP file
-            using (ZipArchive archive = ZipFile.Open(zipSelectedPath + "\\archive.zip", ZipArchiveMode.Update))
+            using (ZipArchive archive = ZipFile.Open(zipSelectedPath + "\\archive" + date + ".zip", ZipArchiveMode.Update))
             {
                 foreach (var file in archivedFiles)
                 {
@@ -134,9 +149,9 @@ namespace ClassLibraryMichalWendt
 
         public void ReadListFromFile()  // Read paths saved in configuration files
         {
-            string path = ConfigDirectoryPath + "archivedFiles.txt";    // Read archive path from txt file using plain text
+            string path = ConfigDirectoryPath + "archivedPath.txt";    // Read archive path from txt file using plain text
             zipSelectedPath =  File.ReadAllText(path).Split('\n')[0];
-
+            eventLog.WriteEntry("zipSelectedPath" + zipSelectedPath, EventLogEntryType.Error);
             string path2 = ConfigDirectoryPath + "archivedFiles.txt";   // Read file names from txt file using plain text
             List<string> result = File.ReadAllText(path2).Split('\n').ToList();
             foreach (string file in result)
@@ -163,10 +178,10 @@ namespace ClassLibraryMichalWendt
 
         public void StopService()   // On stop button pushed disables watchers and logs
         {
-            for (int i = 0; i < watchers.Count; ++i)
+            /*for (int i = 0; i < watchers.Count; ++i)
             {
                 watchers[i].Dispose();
-            }
+            }*/
             eventLog.Dispose();
         }
 

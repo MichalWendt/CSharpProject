@@ -31,9 +31,9 @@ namespace ProjectMichalWendt
         static HashSet<string> archivedFiles = new HashSet<string>(); // I hold only unique paths to files
         public static string SelectedPath = "c:\\archives";  // Path to archivized files
 
-        readonly static string EventLogName = ConfigurationManager.AppSettings["Dziennik"];
+        /*readonly static string EventLogName = ConfigurationManager.AppSettings["Dziennik"];
         readonly static string EventLogSource = ConfigurationManager.AppSettings["Zrodlo"];
-        readonly static string ServiceName = ConfigurationManager.AppSettings["ServiceName"];
+        readonly static string ServiceName = ConfigurationManager.AppSettings["ServiceName"];*/
         readonly static string ConfigDirectoryPath = ConfigurationManager.AppSettings["ConfigDirectoryPath"];
 
         public MainWindow()

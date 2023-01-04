@@ -27,7 +27,8 @@ namespace ServiceMichalWendt
             try
             {
                 archivLib.StartService();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 EventLog.WriteEntry("Service", "Failed to start Service " + ex.Message, EventLogEntryType.Error);
             }
@@ -43,7 +44,6 @@ namespace ServiceMichalWendt
             {
                 EventLog.WriteEntry("Service", "Failed to stop Service " + ex.Message, EventLogEntryType.Error);
             }
-
         }
     }
 }
