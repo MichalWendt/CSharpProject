@@ -15,42 +15,42 @@
             <ColumnDefinition Width="167*"/>
             <ColumnDefinition Width="233*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="AddButton" Content="Dodaj pliku lub folder" HorizontalAlignment="Left" FontWeight="Bold" Margin="30,40,0,0" VerticalAlignment="Top" Click="Add_File" Height="38" Width="137">
+        <Button x:Name="AddButton" Content="Dodaj plik lub folder" HorizontalAlignment="Left" FontWeight="Bold" Margin="32,27,0,0" VerticalAlignment="Top" Click="Add_File" Height="40" Width="150">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="20"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Button x:Name="DeleteButton" Content="Usuń pliku lub folder" HorizontalAlignment="Left" FontWeight="Bold" Margin="30,92,0,0" VerticalAlignment="Top" Click="Remove_File" Height="38" Width="137">
+        <Button x:Name="DeleteButton" Content="Usuń plik lub folder" HorizontalAlignment="Left" FontWeight="Bold" Margin="32,92,0,0" VerticalAlignment="Top" Click="Remove_File" Height="40" Width="150">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="20"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Label Name="label" Content="Usługa:"  Margin="0,0,46,10" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18" Foreground="#000000" Background="#888888" FontStyle="Italic" BorderThickness="2" BorderBrush="Black" Height="45" VerticalAlignment="Bottom" Padding="5" HorizontalAlignment="Right" Width="262">
+        <Label Name="label" Content="Usługa:"  Margin="0,0,37,10" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="18" Foreground="#000000" Background="#888888" FontStyle="Italic" BorderThickness="2" BorderBrush="Black" Height="45" VerticalAlignment="Bottom" Padding="5" HorizontalAlignment="Right" Width="270">
             <Label.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="20"/>
                 </Style>
             </Label.Resources>
         </Label>
-        <Button Name ="StartButton" Content="Start" Click="StartButton_Click" Background="#FF6EED2A" FontSize="12" FontWeight="Bold" BorderThickness="1" BorderBrush="Gray" Margin="0,320,185,0" Padding="5" Height="33" VerticalAlignment="Top" HorizontalAlignment="Right" Width="123">
+        <Button Name ="StartButton" Content="Start" Click="StartButton_Click" Background="#FF6EED2A" FontSize="12" FontWeight="Bold" BorderThickness="1" BorderBrush="Gray" Margin="0,301,177,0" Padding="5" Height="40" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="20"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Button Name ="StopButton" Content="Stop" Click="StopButton_Click" Background="#FFEA4B38" FontSize="12" FontWeight="Bold" BorderThickness="1" BorderBrush="Gray" Margin="0,320,46,0" Padding="5" Height="33" VerticalAlignment="Top" HorizontalAlignment="Right" Width="123">
+        <Button Name ="StopButton" Content="Stop" Click="StopButton_Click" Background="#FFEA4B38" FontSize="12" FontWeight="Bold" BorderThickness="1" BorderBrush="Gray" Margin="0,301,37,0" Padding="5" Height="40" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="20"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Label Content="Miejsce zapisu archiwów:" HorizontalAlignment="Left" Margin="30,177,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label Content="Miejsce zapisu archiwów:" HorizontalAlignment="Left" Margin="30,172,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
         <DockPanel Height="28" Margin="30 0 30 0">
             <Button x:Name="FolderButton"
@@ -59,10 +59,13 @@
                 Content="..."
                 Click="BrowseButton_Click" />
             <Grid>
-                <TextBox 
-                HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="85*"/>
+                    <ColumnDefinition Width="163*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox VerticalAlignment="Center"
                 x:Name="SelectedPathTxtBox"
-                LostKeyboardFocus="SelectedPathTxtBox_LostKeyboardFocus" TextChanged="SelectedPathTxtBox_TextChanged" />
+                LostKeyboardFocus="SelectedPathTxtBox_LostKeyboardFocus" TextChanged="SelectedPathTxtBox_TextChanged" Grid.ColumnSpan="2" />
             </Grid>
         </DockPanel>
         <ListBox x:Name="archivedFilesWindow" Grid.Column="1"/>

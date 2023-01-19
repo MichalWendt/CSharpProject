@@ -28,9 +28,10 @@ namespace ServiceMichalWendt
             {
                 archivLib.StartService();
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 EventLog.WriteEntry("Service", "Failed to start Service " + ex.Message, EventLogEntryType.Error);
+                throw new NullReferenceException();
             }
         }
 
@@ -40,9 +41,10 @@ namespace ServiceMichalWendt
             {
                 archivLib.StopService();
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 EventLog.WriteEntry("Service", "Failed to stop Service " + ex.Message, EventLogEntryType.Error);
+                throw new NullReferenceException();
             }
         }
     }

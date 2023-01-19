@@ -35,10 +35,10 @@ namespace ProjectMichalWendt
         readonly static string EventLogSource = ConfigurationManager.AppSettings["Zrodlo"];
         readonly static string ServiceName = ConfigurationManager.AppSettings["ServiceName"];*/
         readonly static string ConfigDirectoryPath = ConfigurationManager.AppSettings["ConfigDirectoryPath"];
+        string CurrentEventLogSaveDirectoryPath;
 
         public MainWindow()
         {
-            //MessageBox.Show("log");
             InitializeComponent();
             archivedFilesWindow.SelectionMode = SelectionMode.Multiple; // Let user choose multiple files from the list to delete
             SelectedPathTxtBox.Text = SelectedPath; // Default path to save archives
@@ -172,7 +172,7 @@ namespace ProjectMichalWendt
             }*/
         }
 
-        public void StartButton_Click(object sender, RoutedEventArgs e) // Start app but ensure if archiv folder was choosen
+        public void StartApplication()
         {
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
@@ -181,26 +181,39 @@ namespace ProjectMichalWendt
             FolderButton.IsEnabled = false;
             label.Content = "Usługa: Uruchomiona";
 
-            if (SelectedPathTxtBox.Text == @"c:\archives")
+            SaveListToFile();
+            serviceController.Start();
+            serviceController.WaitForStatus(ServiceControllerStatus.Running);
+        }
+
+        public void StartButton_Click(object sender, RoutedEventArgs e) // Start app but ensure if archiv folder was choosen
+        {
+            if (archivedFiles.Any())
             {
-                MessageBoxResult result = MessageBox.Show("Sciezka zapisu nie zostala ustawiona.\nDomyślnie wybrana: " + SelectedPathTxtBox.Text + "\nCzy chcesz ją zmienić?", "Nie podano sciezki", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                switch (result)
+                if (SelectedPathTxtBox.Text == @"c:\archives")
                 {
-                    case MessageBoxResult.Yes:
-                        break;
-                    case MessageBoxResult.No:
-                        SaveListToFile();
-                        serviceController.Start();
-                        serviceController.WaitForStatus(ServiceControllerStatus.Running);                      
-                        break;
+                    MessageBoxResult result = MessageBox.Show("Sciezka zapisu nie zostala ustawiona.\nDomyślnie wybrana: " + SelectedPathTxtBox.Text + "\nCzy chcesz ją zmienić?", "Nie podano sciezki", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    switch (result)
+                    {
+                        case MessageBoxResult.Yes:
+                            break;
+                        case MessageBoxResult.No:
+                            StartApplication();
+                            break;
+                    }
+                }
+                else if (SelectedPathTxtBox.Text == @"")
+                {
+                    MessageBox.Show("Sciezka zapisu nie zostala poprawnie ustawiona");
+                }
+                else
+                {
+                    StartApplication();
                 }
             }
             else
             {
-                SaveListToFile();
-                serviceController.Start();
-                serviceController.WaitForStatus(ServiceControllerStatus.Running);
-
+                MessageBox.Show("Lista plików nie może być pusta");
             }
         }
 
@@ -220,6 +233,7 @@ namespace ProjectMichalWendt
         private void SelectedPathTxtBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
-        }
+        }               
     }
 }
+
